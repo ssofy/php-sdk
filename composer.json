@@ -1,0 +1,53 @@
+{
+    "name": "ssofy/php-sdk",
+    "type": "library",
+    "description": "Official SSOfy PHP SDK for instant and efficient API access.",
+    "keywords": [
+        "ssofy",
+        "sso",
+        "login",
+        "auth",
+        "authentication",
+        "oauth",
+        "oauth2",
+        "sdk"
+    ],
+    "homepage": "https://github.com/ssofy/php-sdk#readme",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "SSOfy",
+            "email": "support@ssofy.com"
+        },
+        {
+            "name": "Cubelet Ltd.",
+            "email": "info@cubelet.co.uk"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "ext-curl": "*",
+        "ext-openssl": "*",
+        "ext-json": "*",
+        "league/oauth2-client": "dev-master"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.13",
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-0": {
+            "SSOfy\\": "src/",
+            "SSOfy\\Tests": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit --exclude skip",
+        "cs-fixer": "php-cs-fixer fix"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.x-dev"
+        }
+    }
+}
