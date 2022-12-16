@@ -36,9 +36,8 @@
         "phpunit/phpunit": "^9.5"
     },
     "autoload": {
-        "psr-0": {
-            "SSOfy\\": "src/",
-            "SSOfy\\Tests": "tests/"
+        "psr-4": {
+            "": "src/"
         }
     },
     "scripts": {
