@@ -38,13 +38,15 @@ class SignatureGenerator
         ]);
     }
 
-    private function getValues($array, $values = [])
+    private function getValues($array)
     {
+        $values = [];
+
         ksort($array);
 
         foreach ($array as $key => &$value) {
             if (is_array($value)) {
-                $values = $this->getValues($value, $values);
+                $values = array_merge($values, $this->getValues($value));
                 continue;
             }
 
