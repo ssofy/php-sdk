@@ -1,6 +1,8 @@
 <?php
 
-namespace SSOfy\Models;
+namespace SSOfy\Models\Entities;
+
+use SSOfy\Models\BaseModel;
 
 /**
  * @property string id

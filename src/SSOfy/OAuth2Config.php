@@ -25,7 +25,7 @@ class OAuth2Config
             'pkce_method'        => 'S256',
             'timeout'            => 60 * 60, // 1 hour
             'scopes'             => [],
-            'otp'                => null,
+            'token'              => null,
             'session_store'      => null,
             'state_store'        => null,
             'state_ttl'          => 60 * 60 * 24 * 365, // 1 year
@@ -35,79 +35,150 @@ class OAuth2Config
         $this->config = array_intersect_key($this->config, $default);
 
         foreach ($this->config as $key => $val) {
-            $fn = Helper::snakeToCamel($key);
+            $fn = 'set' . Helper::snakeToCamel($key);
             $this->$fn($val);
         }
     }
 
     /**
-     * @param string $value
-     * @return $this|string
+     * @return string
      */
-    public function clientId($value = null)
+    public function getClientId()
     {
-        return $this->getOrSet('client_id', $value);
+        return $this->config['client_id'];
     }
 
     /**
      * @param string $value
-     * @return $this|string
+     * @return $this
      */
-    public function clientSecret($value = null)
+    public function setClientId($value)
     {
-        return $this->getOrSet('client_secret', $value);
+        $this->config['client_id'] = $value;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getClientSecret()
+    {
+        return $this->config['client_secret'];
     }
 
     /**
      * @param string $value
-     * @return $this|string
+     * @return $this
      */
-    public function authorizeUrl($value = null)
+    public function setClientSecret($value)
     {
-        return $this->getOrSet('authorize_url', $value);
+        $this->config['client_secret'] = $value;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAuthorizeUrl()
+    {
+        return $this->config['authorize_url'];
     }
 
     /**
      * @param string $value
-     * @return $this|string
+     * @return $this
      */
-    public function tokenUrl($value = null)
+    public function setAuthorizeUrl($value)
     {
-        return $this->getOrSet('token_url', $value);
+        $this->config['authorize_url'] = $value;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTokenUrl()
+    {
+        return $this->config['token_url'];
     }
 
     /**
      * @param string $value
-     * @return $this|string
+     * @return $this
      */
-    public function resourceOwnerUrl($value = null)
+    public function setTokenUrl($value)
     {
-        return $this->getOrSet('resource_owner_url', $value);
+        $this->config['token_url'] = $value;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getResourceOwnerUrl()
+    {
+        return $this->config['resource_owner_url'];
     }
 
     /**
      * @param string $value
-     * @return $this|string
+     * @return $this
      */
-    public function redirectUri($value = null)
+    public function setResourceOwnerUrl($value)
     {
-        return $this->getOrSet('redirect_uri', $value);
+        $this->config['resource_owner_url'] = $value;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRedirectUri()
+    {
+        return $this->config['redirect_uri'];
+    }
+
+    /**
+     * @param string $value
+     * @return $this
+     */
+    public function setRedirectUri($value)
+    {
+        $this->config['redirect_uri'] = $value;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getPkceVerification()
+    {
+        return $this->config['pkce_verification'];
     }
 
     /**
      * @param boolean $value
-     * @return $this|boolean
+     * @return $this
      */
-    public function pkceVerification($value = null)
+    public function setPkceVerification($value)
     {
-        return $this->getOrSet('pkce_verification', boolval($value));
+        $this->config['pkce_verification'] = boolval($value);
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPkceMethod()
+    {
+        return $this->config['pkce_method'];
     }
 
     /**
      * @param string $value
-     * @return $this|string
+     * @return $this
      */
-    public function pkceMethod($value = null)
+    public function setPkceMethod($value)
     {
         if (is_string($value)) {
             $value = strtolower($value);
@@ -123,61 +194,116 @@ class OAuth2Config
             }
         }
 
-        return $this->getOrSet('pkce_method', $value);
+        $this->config['pkce_method'] = $value;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTimeout()
+    {
+        return $this->config['timeout'];
     }
 
     /**
      * @param int $value
-     * @return $this|int
+     * @return $this
      */
-    public function timeout($value = null)
+    public function setTimeout($value)
     {
-        return $this->getOrSet('timeout', $value);
+        $this->config['timeout'] = $value;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getScopes()
+    {
+        return $this->config['scopes'];
     }
 
     /**
      * @param array $value
-     * @return $this|array
+     * @return $this
      */
-    public function scopes($value = null)
+    public function setScopes($value)
     {
-        return $this->getOrSet('scopes', $value);
+        $this->config['scopes'] = $value;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getToken()
+    {
+        return $this->config['token'];
     }
 
     /**
      * @param string $value
-     * @return $this|string
+     * @return $this
      */
-    public function otp($value = null)
+    public function setToken($value)
     {
-        return $this->getOrSet('otp', $value);
+        $this->config['token'] = $value;
+        return $this;
+    }
+
+    /**
+     * @return StorageInterface
+     */
+    public function getSessionStore()
+    {
+        return $this->config['session_store'];
     }
 
     /**
      * @param StorageInterface $value
-     * @return $this|StorageInterface
+     * @return $this
      */
-    public function sessionStore($value = null)
+    public function setSessionStore($value)
     {
-        return $this->getOrSet('session_store', $value);
+        $this->config['session_store'] = $value;
+        return $this;
+    }
+
+    /**
+     * @return StorageInterface
+     */
+    public function getStateStore()
+    {
+        return $this->config['state_store'];
     }
 
     /**
      * @param StorageInterface $value
-     * @return $this|StorageInterface
+     * @return $this
      */
-    public function stateStore($value = null)
+    public function setStateStore($value)
     {
-        return $this->getOrSet('state_store', $value);
+        $this->config['state_store'] = $value;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStateTtl()
+    {
+        return $this->config['state_ttl'];
     }
 
     /**
      * @param int $value
-     * @return $this|int
+     * @return $this
      */
-    public function stateTtl($value = null)
+    public function setStateTtl($value)
     {
-        return $this->getOrSet('state_ttl', $value);
+        $this->config['state_ttl'] = $value;
+        return $this;
     }
 
     /**
@@ -186,16 +312,5 @@ class OAuth2Config
     public function toArray()
     {
         return $this->config;
-    }
-
-    private function getOrSet($key, $val)
-    {
-        if (is_null($val)) {
-            return $this->config[$key];
-        }
-
-        $this->config[$key] = $val;
-
-        return $this;
     }
 }

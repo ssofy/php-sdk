@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use SSOfy\Exceptions\RequiredAttributeException;
-use SSOfy\Models\ClientEntity;
+use SSOfy\Models\Entities\ClientEntity;
 
 class ClientModelTest extends TestCase
 {

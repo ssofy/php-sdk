@@ -2,10 +2,10 @@
 
 use PHPUnit\Framework\TestCase;
 use SSOfy\ClientConfig;
-use SSOfy\Models\ClientEntity;
-use SSOfy\Models\ScopeEntity;
+use SSOfy\Models\Entities\ClientEntity;
+use SSOfy\Models\Entities\ScopeEntity;
 use SSOfy\Models\Signature;
-use SSOfy\Models\UserEntity;
+use SSOfy\Models\Entities\UserEntity;
 use SSOfy\SignatureValidator;
 
 class SignatureValidatorTest extends TestCase
@@ -52,11 +52,12 @@ class SignatureValidatorTest extends TestCase
                 'params'    => [
                     'user' => UserEntity::make([
                         'id'           => 'test-user',
+                        'hash'         => 'test-user',
                         'display_name' => 'test@example.com',
                     ])->toArray(),
                 ],
                 'signature' => base64_encode(json_encode(Signature::make([
-                    'hash' => '599f54743dde85838520851fc550285bc0d8365bf02c6d2f9a96da635dbd6a72',
+                    'hash' => '2fff5bfa4fc2cf01e6cf7abf5811bd8e2d3c22ffbad55c14c0d918c7fcf4a6f2',
                     'salt' => 'y4HWL'
                 ])->toArray())),
             ],

@@ -14,8 +14,8 @@ class SignatureGenerator
      */
     public function __construct($config)
     {
-        $this->key    = $config->key();
-        $this->secret = $config->secret();
+        $this->key    = $config->getKey();
+        $this->secret = $config->getSecret();
     }
 
     /**

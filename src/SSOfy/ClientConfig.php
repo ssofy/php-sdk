@@ -26,63 +26,117 @@ class ClientConfig
         $this->config = array_intersect_key($this->config, $default);
 
         foreach ($this->config as $key => $val) {
-            $fn = Helper::snakeToCamel($key);
+            $fn = 'set' . Helper::snakeToCamel($key);
             $this->$fn($val);
         }
     }
 
     /**
      * @param string $value
-     * @return $this|string
+     * @return $this
      */
-    public function domain($value = null)
+    public function setDomain($value)
     {
-        return $this->getOrSet('domain', $value);
+        $this->config['domain'] = $value;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDomain()
+    {
+        return $this->config['domain'];
     }
 
     /**
      * @param string $value
-     * @return $this|string
+     * @return $this
      */
-    public function key($value = null)
+    public function setKey($value)
     {
-        return $this->getOrSet('key', $value);
+        $this->config['key'] = $value;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getKey()
+    {
+        return $this->config['key'];
     }
 
     /**
      * @param string $value
-     * @return $this|string
+     * @return $this
      */
-    public function secret($value = null)
+    public function setSecret($value)
     {
-        return $this->getOrSet('secret', $value);
+        $this->config['secret'] = $value;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSecret()
+    {
+        return $this->config['secret'];
     }
 
     /**
      * @param StorageInterface $value
-     * @return $this|StorageInterface
+     * @return $this
      */
-    public function cacheStore($value = null)
+    public function setCacheStore($value)
     {
-        return $this->getOrSet('cache_store', $value);
+        $this->config['cache_store'] = $value;
+        return $this;
+    }
+
+    /**
+     * @return StorageInterface
+     */
+    public function getCacheStore()
+    {
+        return $this->config['cache_store'];
     }
 
     /**
      * @param int $value
-     * @return $this|int
+     * @return $this
      */
-    public function cacheTtl($value = null)
+    public function setCacheTtl($value)
     {
-        return $this->getOrSet('cache_ttl', $value);
+        $this->config['cache_ttl'] = $value;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCacheTtl()
+    {
+        return $this->config['cache_ttl'];
     }
 
     /**
      * @param boolean $value
-     * @return $this|boolean
+     * @return $this
      */
-    public function secure($value = null)
+    public function setSecure($value)
     {
-        return $this->getOrSet('secure', $value);
+        $this->config['secure'] = $value;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getSecure()
+    {
+        return $this->config['secure'];
     }
 
     /**
@@ -91,16 +145,5 @@ class ClientConfig
     public function toArray()
     {
         return $this->config;
-    }
-
-    private function getOrSet($key, $val)
-    {
-        if (is_null($val)) {
-            return $this->config[$key];
-        }
-
-        $this->config[$key] = $val;
-
-        return $this;
     }
 }

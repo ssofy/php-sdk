@@ -1,27 +1,26 @@
 <?php
 
-namespace SSOfy\Models;
+namespace SSOfy\Models\Entities;
+
+use SSOfy\Models\BaseModel;
 
 /**
  * @property string id
- * @property string title
- * @property string description
- * @property string icon
- * @property string url
+ * @property string type
+ * @property string hint
  */
-class ScopeEntity extends BaseModel
+class OTPOptionEntity extends BaseModel
 {
     protected $properties = [
         'id',
-        'title',
-        'description',
-        'icon',
-        'url',
+        'type',
+        'hint',
     ];
 
     protected $required = [
         'id',
-        'title',
+        'type',
+        'hint',
     ];
 
     protected function validate($attr, $value)
@@ -32,10 +31,8 @@ class ScopeEntity extends BaseModel
 
         switch ($attr) {
             case 'id':
-            case 'title':
-            case 'description':
-            case 'icon':
-            case 'url':
+            case 'type':
+            case 'hint':
                 if (!is_string($value)) {
                     return 'value must be string.';
                 }

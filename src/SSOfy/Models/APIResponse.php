@@ -2,6 +2,8 @@
 
 namespace SSOfy\Models;
 
+use SSOfy\Models\Entities\UserEntity;
+
 /**
  * @property Token token
  * @property UserEntity $user

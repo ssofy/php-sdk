@@ -31,8 +31,8 @@ class OAuth2Client
     public function __construct($config)
     {
         $this->config       = $config;
-        $this->stateStore   = empty($config->stateStore()) ? new NullStorage() : $config->stateStore();
-        $this->sessionStore = empty($config->sessionStore()) ? new NullStorage() : $config->sessionStore();
+        $this->stateStore   = empty($config->getStateStore()) ? new NullStorage() : $config->getStateStore();
+        $this->sessionStore = empty($config->getSessionStore()) ? new NullStorage() : $config->getSessionStore();
     }
 
     /**
@@ -61,11 +61,11 @@ class OAuth2Client
         $authorizationUrl = $provider->getAuthorizationUrl();
         $state            = $provider->getState();
 
-        if ($this->config->pkceVerification()) {
+        if ($this->config->getPkceVerification()) {
             $stateData['pkce_code'] = $provider->getPkceCode();
         }
 
-        $this->saveState($state, $stateData, $this->config->timeout());
+        $this->saveState($state, $stateData, $this->config->getTimeout());
 
         return $authorizationUrl;
     }
@@ -83,7 +83,7 @@ class OAuth2Client
 
         $provider = new GenericProvider($this->buildLeagueConfig($config));
 
-        if ($config->pkceVerification()) {
+        if ($config->getPkceVerification()) {
             $provider->setPkceCode($stateData['pkce_code']);
         }
 
@@ -93,7 +93,7 @@ class OAuth2Client
 
         $stateData['access_token'] = $accessToken;
 
-        $this->saveState($state, $stateData, $this->config->stateTtl());
+        $this->saveState($state, $stateData, $this->config->getStateTtl());
 
         $this->sessionStore->put($this->stateSessionKey(), $state);
 
@@ -148,7 +148,7 @@ class OAuth2Client
 
         $stateData['user'] = $user;
 
-        $this->saveState($state, $stateData, $this->config->stateTtl());
+        $this->saveState($state, $stateData, $this->config->getStateTtl());
 
         return $user;
     }
@@ -176,7 +176,7 @@ class OAuth2Client
 
         $provider = new GenericProvider($this->buildLeagueConfig($config));
 
-        if ($config->pkceVerification()) {
+        if ($config->getPkceVerification()) {
             $provider->setPkceCode($stateData['pkce_code']);
         }
 
@@ -186,7 +186,7 @@ class OAuth2Client
 
         $stateData['access_token'] = $accessToken;
 
-        $this->saveState($state, $stateData, $this->config->stateTtl());
+        $this->saveState($state, $stateData, $this->config->getStateTtl());
 
         return $accessToken;
     }
@@ -244,23 +244,23 @@ class OAuth2Client
      */
     private function buildLeagueConfig($config)
     {
-        $authorizeUrl = $config->authorizeUrl();
+        $authorizeUrl = $config->getAuthorizeUrl();
 
-        if (!is_null($config->otp())) {
+        if (!is_null($config->getToken())) {
             $authorizeUrl = Helper::addUrlParams($authorizeUrl, [
-                'token' => $config->otp()
+                'token' => $config->getToken()
             ]);
         }
 
         return [
-            'clientId'                => $config->clientId(),
-            'clientSecret'            => $config->clientSecret(),
-            'redirectUri'             => $config->redirectUri(),
+            'clientId'                => $config->getClientId(),
+            'clientSecret'            => $config->getClientSecret(),
+            'redirectUri'             => $config->getRedirectUri(),
             'urlAuthorize'            => $authorizeUrl,
-            'urlAccessToken'          => $config->tokenUrl(),
-            'urlResourceOwnerDetails' => $config->resourceOwnerUrl(),
-            'pkceMethod'              => $config->pkceVerification() ? $config->pkceMethod() : null,
-            'scopes'                  => implode(' ', $config->scopes()),
+            'urlAccessToken'          => $config->getTokenUrl(),
+            'urlResourceOwnerDetails' => $config->getResourceOwnerUrl(),
+            'pkceMethod'              => $config->getPkceVerification() ? $config->getPkceMethod() : null,
+            'scopes'                  => implode(' ', $config->getScopes()),
             'scopeSeparator'          => ' ',
         ];
     }

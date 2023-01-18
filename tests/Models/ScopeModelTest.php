@@ -1,7 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use SSOfy\Models\ScopeEntity;
+use SSOfy\Models\Entities\ScopeEntity;
 
 class ScopeModelTest extends TestCase
 {

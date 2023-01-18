@@ -1,7 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use SSOfy\Models\UserEntity;
+use SSOfy\Models\Entities\UserEntity;
 
 class UserModelTest extends TestCase
 {
@@ -9,6 +9,7 @@ class UserModelTest extends TestCase
     {
         $data = [
             'id'           => 'id_test',
+            'hash'         => 'id_test',
             'display_name' => 'display_name_test',
             'name'         => 'name_test',
             'picture'      => 'picture_test',
@@ -27,6 +28,7 @@ class UserModelTest extends TestCase
     {
         $data = [
             'id'           => 'id_test',
+            'hash'         => 'id_test',
             'display_name' => 'display_name_test',
             'name'         => 'name_test',
             'picture'      => 'picture_test',

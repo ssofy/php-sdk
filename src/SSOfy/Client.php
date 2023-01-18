@@ -9,7 +9,7 @@ use SSOfy\Exceptions\InvalidTokenException;
 use SSOfy\Exceptions\SignatureVerificationException;
 use SSOfy\Models\APIResponse;
 use SSOfy\Models\Token;
-use SSOfy\Models\UserEntity;
+use SSOfy\Models\Entities\UserEntity;
 
 class Client
 {
@@ -35,7 +35,7 @@ class Client
     {
         $this->config = $config;
 
-        $this->cache = empty($config->cacheStore()) ? new NullStorage() : $config->cacheStore();
+        $this->cache = empty($config->getCacheStore()) ? new NullStorage() : $config->getCacheStore();
 
         $this->signatureGenerator = new SignatureGenerator($config);
     }
@@ -174,14 +174,14 @@ class Client
                     $ttl = max(1, $ttl); // token ttl should not be eternal
                 }
 
-                $this->cache->put($cacheKey, $response['body'], min($ttl, $this->config->cacheTtl()));
+                $this->cache->put($cacheKey, $response['body'], min($ttl, $this->config->getCacheTtl()));
             }
 
             return $parsed;
         } catch (InvalidTokenException $exception) {
             if ($cache) {
                 // cache the failure result to avoid repetitive requests to server
-                $this->cache->put($cacheKey, '', $this->config->cacheTtl());
+                $this->cache->put($cacheKey, '', $this->config->getCacheTtl());
             }
 
             throw $exception;
@@ -199,9 +199,9 @@ class Client
      */
     private function request($path, $fields = [], $post = false)
     {
-        $protocol = $this->config->secure() ? 'https://' : 'http://';
+        $protocol = $this->config->getSecure() ? 'https://' : 'http://';
 
-        $url = $protocol . $this->config->domain();
+        $url = $protocol . $this->config->getDomain();
         $url = Helper::urlJoin($url, $path);
 
         $salt      = Helper::randomString(rand(16, 32));
@@ -216,7 +216,7 @@ class Client
             [
                 'Content-Type: application/json',
                 'Accept: application/json',
-                'Api-Key: ' . $this->config->key(),
+                'Api-Key: ' . $this->config->getKey(),
                 'Signature: ' . $signature,
             ]
         );

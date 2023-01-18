@@ -1,6 +1,8 @@
 <?php
 
-namespace SSOfy\Models;
+namespace SSOfy\Models\Entities;
+
+use SSOfy\Models\BaseModel;
 
 /**
  * @property string id
@@ -14,6 +16,7 @@ class UserEntity extends BaseModel
 {
     protected $properties = [
         'id',
+        'hash',
         'display_name',
         'name',
         'picture',
@@ -23,7 +26,7 @@ class UserEntity extends BaseModel
 
     protected $required = [
         'id',
-        'display_name',
+        'hash',
     ];
 
     protected $defaults = [
