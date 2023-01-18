@@ -5,7 +5,7 @@
 * First Release
 
 
-## 1.0.1 - 2023-01-19
+## 1.1.0 - 2023-01-19
 
 * Moved entities to the respective directory at Models/Entities
 * Added setter/getters to ClientConfig and OAuth2Config classes
