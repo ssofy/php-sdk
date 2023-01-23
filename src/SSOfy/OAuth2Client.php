@@ -2,6 +2,7 @@
 
 namespace SSOfy;
 
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\GenericProvider;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Token\AccessTokenInterface;
@@ -73,7 +74,8 @@ class OAuth2Client
     /**
      * @param string $state
      * @param string $code
-     * @return void
+     * @return string
+     * @throws IdentityProviderException
      */
     public function continueAuthCodeFlow($state, $code)
     {
@@ -156,6 +158,7 @@ class OAuth2Client
     /**
      * @param string $state
      * @return AccessTokenInterface
+     * @throws IdentityProviderException
      */
     public function getAccessToken($state)
     {

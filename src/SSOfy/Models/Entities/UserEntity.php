@@ -10,6 +10,8 @@ use SSOfy\Models\BaseModel;
  * @property string name
  * @property string picture
  * @property string profile
+ * @property string email
+ * @property string phone
  * @property array additional
  */
 class UserEntity extends BaseModel
@@ -21,6 +23,8 @@ class UserEntity extends BaseModel
         'name',
         'picture',
         'profile',
+        'email',
+        'phone',
         'additional',
     ];
 
@@ -48,7 +52,18 @@ class UserEntity extends BaseModel
                 if (!is_string($value)) {
                     return 'value must be string.';
                 }
+                break;
 
+            case 'email':
+                if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                    return 'value must be email';
+                }
+                break;
+
+            case 'phone':
+                if (substr($value, 0, 1) != '+' || strlen($value) < 10 || strlen($value) > 20) {
+                    return 'value must be E164 phone number';
+                }
                 break;
 
             case 'additional':

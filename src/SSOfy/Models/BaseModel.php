@@ -18,22 +18,9 @@ class BaseModel implements \JsonSerializable
 
     protected $values = [];
 
-    /**
-     * @throws InvalidValueException
-     */
     public function __construct($attributes = [])
     {
-        foreach ($this->properties as $attr) {
-            $value = isset($attributes[$attr]) ? $attributes[$attr] : (isset($this->defaults[$attr]) ? $this->defaults[$attr] : null);
-
-            $this->values[$attr] = $value;
-
-            if (!is_null($value) && true !== $message = $this->validate($attr, $value)) {
-                throw new InvalidValueException($attr, $message);
-            }
-
-            unset($attributes[$attr]);
-        }
+        $this->initialize($attributes);
     }
 
     /**
@@ -141,5 +128,20 @@ class BaseModel implements \JsonSerializable
         $this->values[$attr] = $value;
 
         return $this;
+    }
+
+    private function initialize($attributes)
+    {
+        foreach ($this->properties as $attr) {
+            $value = isset($attributes[$attr]) ? $attributes[$attr] : (isset($this->defaults[$attr]) ? $this->defaults[$attr] : null);
+
+            $this->values[$attr] = $value;
+
+            if (!is_null($value) && true !== $message = $this->validate($attr, $value)) {
+                throw new InvalidValueException($attr, $message);
+            }
+
+            unset($attributes[$attr]);
+        }
     }
 }
