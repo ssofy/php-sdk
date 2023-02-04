@@ -34,6 +34,14 @@ class BaseModel implements \JsonSerializable
 
     protected function validate($attr, $value)
     {
+        if (is_null($value)) {
+            return true;
+        }
+
+        if (!is_string($value) && in_array($attr, $this->properties)) {
+            return 'value must be string.';
+        }
+
         return true;
     }
 

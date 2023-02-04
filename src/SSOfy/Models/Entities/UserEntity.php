@@ -45,27 +45,19 @@ class UserEntity extends BaseModel
         }
 
         switch ($attr) {
-            case 'id':
-            case 'display_name':
-            case 'name':
-            case 'picture':
-            case 'profile':
-                if (!is_string($value)) {
-                    return 'value must be string.';
-                }
-                break;
-
             case 'email':
                 if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
                     return 'value must be email';
                 }
-                break;
+
+                return true;
 
             case 'phone':
                 if (substr($value, 0, 1) != '+' || strlen($value) < 10 || strlen($value) > 20) {
                     return 'value must be E164 phone number';
                 }
-                break;
+
+                return true;
 
             case 'additional':
                 if (!is_array($this->values['additional'])) {
@@ -82,7 +74,7 @@ class UserEntity extends BaseModel
                     }
                 }
 
-                break;
+                return true;
         }
 
         return parent::validate($attr, $value);

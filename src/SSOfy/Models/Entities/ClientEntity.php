@@ -61,25 +61,12 @@ class ClientEntity extends BaseModel
         }
 
         switch ($attr) {
-            case 'id':
-            case 'name':
-            case 'secret':
-            case 'icon':
-            case 'theme':
-            case 'tos':
-            case 'privacy_policy':
-                if (!is_string($value)) {
-                    return 'value must be string.';
-                }
-
-                break;
-
             case 'confidential':
                 if (!is_bool($value)) {
                     return 'value must be boolean.';
                 }
 
-                break;
+                return true;
 
             case 'redirect_uris':
                 if (!is_array($this->values['redirect_uris'])) {
@@ -96,7 +83,7 @@ class ClientEntity extends BaseModel
                     }
                 }
 
-                break;
+                return true;
         }
 
         return parent::validate($attr, $value);

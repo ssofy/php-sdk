@@ -33,14 +33,14 @@ class AuthResponseEntity extends BaseModel
                     return 'value must be UserEntity.';
                 }
 
-                break;
+                return true;
 
             case 'token':
                 if (!$value instanceof TokenEntity) {
                     return 'value must be TokenEntity.';
                 }
 
-                break;
+                return true;
         }
 
         return parent::validate($attr, $value);

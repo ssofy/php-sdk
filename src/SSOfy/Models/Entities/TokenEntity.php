@@ -36,14 +36,14 @@ class TokenEntity extends BaseModel
                     return 'value must be string.';
                 }
 
-                break;
+                return true;
 
             case 'ttl':
                 if (!is_numeric($value)) {
                     return 'value must be integer.';
                 }
 
-                break;
+                return true;
         }
 
         return parent::validate($attr, $value);
