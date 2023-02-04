@@ -71,7 +71,13 @@ class BaseModel implements \JsonSerializable
             $clean[$key] = $val;
         }
 
-        return $clean;
+        array_walk_recursive($clean, function (&$value) {
+            if ($value instanceof \DateTime) {
+                $value = $value->format(\DateTime::ISO8601);
+            }
+        });
+
+        return json_decode(json_encode($clean), true);
     }
 
     /**
@@ -98,21 +104,13 @@ class BaseModel implements \JsonSerializable
 
     public function __toString()
     {
-        return json_encode($this->jsonSerialize(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        return json_encode($this->toArray(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 
     #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
-        $arr = $this->toArray();
-
-        array_walk_recursive($arr, function (&$value) {
-            if ($value instanceof \DateTime) {
-                $value = $value->format(\DateTime::ATOM);
-            }
-        });
-
-        return $arr;
+        return $this->toArray();
     }
 
     private function getOrSet($attr, $value)
