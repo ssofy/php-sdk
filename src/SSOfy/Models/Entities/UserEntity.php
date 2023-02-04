@@ -6,6 +6,7 @@ use SSOfy\Models\BaseModel;
 
 /**
  * @property string id
+ * @property string hash
  * @property string display_name
  * @property string name
  * @property string picture
