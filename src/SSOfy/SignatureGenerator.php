@@ -6,36 +6,26 @@ use SSOfy\Models\Signature;
 
 class SignatureGenerator
 {
-    private $key;
-    private $secret;
-
-    /**
-     * @param ClientConfig $config
-     */
-    public function __construct($config)
-    {
-        $this->key    = $config->getKey();
-        $this->secret = $config->getSecret();
-    }
-
     /**
      * @param string $url
-     * @param array $params
+     * @param array  $params
+     * @param string $secret
      * @param string $salt
      * @return Signature
      */
-    public function generate($url, $params, $salt = null)
+    public function generate($url, $params, $secret, $salt = null)
     {
         $urlPath = parse_url($url, PHP_URL_PATH);
 
-        $toSign = $urlPath . implode('', $this->getValues($params)) . $this->key . $this->secret . $salt;
+        $toSign = $urlPath . implode('', $this->getValues($params)) . $salt;
 
-        $hash = openssl_digest($toSign, "sha256");
+        $hash = hash_hmac("sha256", $toSign, $secret);
 
-        return new Signature([
-            'hash' => $hash,
-            'salt' => $salt,
-        ]);
+        $signature       = new Signature();
+        $signature->hash = $hash;
+        $signature->salt = $salt;
+
+        return $signature;
     }
 
     private function getValues($array)
@@ -44,7 +34,7 @@ class SignatureGenerator
 
         ksort($array);
 
-        foreach ($array as $key => &$value) {
+        foreach ($array as &$value) {
             if (is_array($value)) {
                 $values = array_merge($values, $this->getValues($value));
                 continue;

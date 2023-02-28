@@ -37,7 +37,7 @@ class Client
 
         $this->cache = empty($config->getCacheStore()) ? new NullStorage() : $config->getCacheStore();
 
-        $this->signatureGenerator = new SignatureGenerator($config);
+        $this->signatureGenerator = new SignatureGenerator();
     }
 
     /**
@@ -205,7 +205,7 @@ class Client
         $url = Helper::urlJoin($url, $path);
 
         $salt      = Helper::randomString(rand(16, 32));
-        $signature = base64_encode(json_encode($this->signatureGenerator->generate($url, $fields, $salt)->toArray()));
+        $signature = base64_encode(json_encode($this->signatureGenerator->generate($url, $fields, $this->config->getSecret(), $salt)->toArray()));
 
         $ch = curl_init();
 

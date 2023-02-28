@@ -7,6 +7,11 @@ use SSOfy\Models\Signature;
 class SignatureValidator
 {
     /**
+     * @var ClientConfig
+     */
+    private $config;
+
+    /**
      * @var SignatureGenerator
      */
     private $signatureGenerator;
@@ -16,7 +21,8 @@ class SignatureValidator
      */
     public function __construct($config)
     {
-        $this->signatureGenerator = new SignatureGenerator($config);
+        $this->config = $config;
+        $this->signatureGenerator = new SignatureGenerator();
     }
 
     /**
@@ -29,7 +35,7 @@ class SignatureValidator
     {
         try {
             $decodedSignature   = new Signature(json_decode(base64_decode($signature), true));
-            $generatedSignature = $this->signatureGenerator->generate($url, $params, $decodedSignature->salt);
+            $generatedSignature = $this->signatureGenerator->generate($url, $params, $this->config->getSecret(), $decodedSignature->salt);
             return $generatedSignature->hash === $decodedSignature->hash;
         } catch (\Exception $exception) {
             return false;
