@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.1.4 - 2023-02-28
+
+* Compliance with Draft 1.30 signature style
+
 ## 1.1.3 - 2023-02-11
 
 * Added missing UserEntity properties
