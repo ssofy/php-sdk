@@ -19,6 +19,24 @@ class Token extends BaseModel
         'expires_at',
     ];
 
+    protected function validate($attr, $value)
+    {
+        if (is_null($value)) {
+            return true;
+        }
+
+        switch ($attr) {
+            case 'scopes':
+                if (!is_array($value)) {
+                    return 'value must be array';
+                }
+
+                return true;
+        }
+
+        return parent::validate($attr, $value);
+    }
+
     public function export()
     {
         $export = parent::export();

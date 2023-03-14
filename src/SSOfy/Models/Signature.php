@@ -4,7 +4,7 @@ namespace SSOfy\Models;
 
 /**
  * @property string hash
- * @property string $salt
+ * @property string salt
  */
 class Signature extends BaseModel
 {

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.1.5 - 2023-03-14
+
+* Fixed issues with APIResponse and Token models
+
 ## 1.1.4 - 2023-02-28
 
 * Compliance with Draft 1.30 signature style

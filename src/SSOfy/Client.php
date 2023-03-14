@@ -55,7 +55,8 @@ class Client
         $response = $this->requestAndCache($path, $token);
 
         return new APIResponse([
-            'token' => new Token($response['token'])
+            'token' => new Token($response['token']),
+            'user'  => new UserEntity($response['user']),
         ]);
     }
 
@@ -75,8 +76,8 @@ class Client
         $response = $this->requestAndCache($path, $token, [], $cache);
 
         return new APIResponse([
+            'token' => new Token($response['token']),
             'user'  => new UserEntity($response['user']),
-            'token' => new Token($response['token'])
         ]);
     }
 
