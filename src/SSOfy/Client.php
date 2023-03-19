@@ -91,7 +91,7 @@ class Client
      */
     public function findUserById($id, $cache = false)
     {
-        $path = "v1/entities/users/find";
+        $path = "v1/resources/users/find";
 
         $response = $this->requestAndCache($path, null, [
             'id' => $id
