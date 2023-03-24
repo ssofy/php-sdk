@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.1.7 - 2023-03-24
+
+* Fixed the minimum stability issue
+
 ## 1.1.6 - 2023-03-19
 
 * Switched to the new User Resource endpoint
