@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.1.8 - 2023-05-29
+
+* Added the missing UserEntity properties
+
 ## 1.1.7 - 2023-03-24
 
 * Fixed the minimum stability issue
