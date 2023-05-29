@@ -15,7 +15,27 @@ use SSOfy\Models\BaseModel;
  * @property bool email_verified
  * @property string phone
  * @property bool phone_verified
- * @property array additional
+ * @property string given_name
+ * @property string middle_name
+ * @property string family_name
+ * @property string nickname
+ * @property string website
+ * @property string gender
+ * @property string birthdate
+ * @property string address
+ * @property string location
+ * @property string zoneinfo
+ * @property string locale
+ * @property string custom_1
+ * @property string custom_2
+ * @property string custom_3
+ * @property string custom_4
+ * @property string custom_5
+ * @property string custom_6
+ * @property string custom_7
+ * @property string custom_8
+ * @property string custom_9
+ * @property array  additional
  */
 class UserEntity extends BaseModel
 {
@@ -30,6 +50,26 @@ class UserEntity extends BaseModel
         'email_verified',
         'phone',
         'phone_verified',
+        "given_name",
+        "middle_name",
+        "family_name",
+        "nickname",
+        "website",
+        "gender",
+        "birthdate",
+        "address",
+        "location",
+        "zoneinfo",
+        "locale",
+        "custom_1",
+        "custom_2",
+        "custom_3",
+        "custom_4",
+        "custom_5",
+        "custom_6",
+        "custom_7",
+        "custom_8",
+        "custom_9",
         'additional',
     ];
 
@@ -71,18 +111,53 @@ class UserEntity extends BaseModel
 
                 return true;
 
+            case 'gender':
+                if (!in_array($value, ['male', 'female'])) {
+                    return 'value must be "male" or "female"';
+                }
+
+                return true;
+
+            case 'birthdate':
+                if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
+                    return 'value must be in Y-m-d format';
+                }
+
+                return true;
+
+            case 'location':
+                if (!preg_match('/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)([^\d]|$),[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)([^\d]|$)/', $value)) {
+                    return 'value must be a valid comma separated coordination';
+                }
+
+                return true;
+
+            case 'zoneinfo':
+                if (!preg_match('/^[A-Za-z0-9_\-+\/]+$/', $value)) {
+                    return 'value must be a valid timezone';
+                }
+
+                return true;
+
+            case 'locale':
+                if (!preg_match('/^[a-z]{2}(?:-[a-z]{2})?$/i', $value)) {
+                    return 'value must be a valid locale';
+                }
+
+                return true;
+
             case 'additional':
                 if (!is_array($this->values['additional'])) {
-                    return 'value must be array.';
+                    return 'value must be array';
                 }
 
                 if (array_keys($this->values['additional']) === range(0, count($this->values['additional']) - 1)) {
-                    return 'value must be an associative array.';
+                    return 'value must be an associative array';
                 }
 
                 foreach ($value as $key => $val) {
                     if (!is_string($key)) {
-                        return 'array must be in key-value format.';
+                        return 'array must be in key-value format';
                     }
                 }
 
