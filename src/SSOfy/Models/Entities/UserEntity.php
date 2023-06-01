@@ -12,6 +12,7 @@ use SSOfy\Models\BaseModel;
  * @property string picture
  * @property string profile
  * @property string email
+ * @property string username
  * @property bool email_verified
  * @property string phone
  * @property bool phone_verified
@@ -46,6 +47,7 @@ class UserEntity extends BaseModel
         'name',
         'picture',
         'profile',
+        'username',
         'email',
         'email_verified',
         'phone',
