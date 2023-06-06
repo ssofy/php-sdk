@@ -4,7 +4,7 @@ namespace SSOfy;
 
 use SSOfy\Storage\StorageInterface;
 
-class ClientConfig
+class APIConfig
 {
     /**
      * @var array

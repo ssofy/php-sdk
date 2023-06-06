@@ -1,8 +1,8 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use SSOfy\Client;
-use SSOfy\ClientConfig;
+use SSOfy\APIClient;
+use SSOfy\APIConfig;
 
 class ClientTest extends TestCase
 {
@@ -10,7 +10,7 @@ class ClientTest extends TestCase
 
     public function setUp(): void
     {
-        $this->client = new Client(new ClientConfig([
+        $this->client = new APIClient(new APIConfig([
             'domain' => 'test.api.ssofy.local',
             'key'    => 'cf47d697-cc0b-4262-8329-78a0995e6fd0',
             'secret' => 'lXp2rNYg8ht75l2l1vxNGNz2PWzZ7h6K',

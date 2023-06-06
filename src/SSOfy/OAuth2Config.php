@@ -15,20 +15,18 @@ class OAuth2Config
     public function __construct($config = [])
     {
         $default = [
-            'client_id'          => null,
-            'client_secret'      => null,
-            'authorize_url'      => null,
-            'token_url'          => null,
-            'resource_owner_url' => null,
-            'redirect_uri'       => null,
-            'pkce_verification'  => true,
-            'pkce_method'        => 'S256',
-            'timeout'            => 60 * 60, // 1 hour
-            'scopes'             => [],
-            'token'              => null,
-            'session_store'      => null,
-            'state_store'        => null,
-            'state_ttl'          => 60 * 60 * 24 * 365, // 1 year
+            'url'               => null,
+            'client_id'         => null,
+            'client_secret'     => null,
+            'redirect_uri'      => null,
+            'pkce_verification' => true,
+            'pkce_method'       => 'S256',
+            'timeout'           => 60 * 60, // 1 hour
+            'scopes'            => [],
+            'locale'            => null,
+            'session_store'     => null,
+            'state_ttl'         => 60 * 60 * 24 * 365, // 1 year
+            'state_store'       => null,
         ];
 
         $this->config = array_merge($default, $config);
@@ -41,7 +39,17 @@ class OAuth2Config
     }
 
     /**
-     * @return string
+     * @param string|null $value
+     * @return $this
+     */
+    public function setUrl($value)
+    {
+        $this->config['url'] = $value;
+        return $this;
+    }
+
+    /**
+     * @return string|null
      */
     public function getClientId()
     {
@@ -49,7 +57,7 @@ class OAuth2Config
     }
 
     /**
-     * @param string $value
+     * @param string|null $value
      * @return $this
      */
     public function setClientId($value)
@@ -59,7 +67,7 @@ class OAuth2Config
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getClientSecret()
     {
@@ -67,7 +75,7 @@ class OAuth2Config
     }
 
     /**
-     * @param string $value
+     * @param string|null $value
      * @return $this
      */
     public function setClientSecret($value)
@@ -77,57 +85,90 @@ class OAuth2Config
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getAuthorizeUrl()
     {
-        return $this->config['authorize_url'];
+        if (empty($this->config['url'])) {
+            return null;
+        }
+
+        return Helper::urlJoin($this->config['url'], "/authorize");
     }
 
     /**
-     * @param string $value
-     * @return $this
+     * @param string $provider
+     * @return string|null
      */
-    public function setAuthorizeUrl($value)
+    public function getSocialAuthorizeUrl($provider)
     {
-        $this->config['authorize_url'] = $value;
-        return $this;
+        if (empty($this->config['url'])) {
+            return null;
+        }
+
+        $provider = strtolower($provider);
+
+        return Helper::urlJoin($this->config['url'], "/social/{$provider}/authorize");
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getTokenUrl()
     {
-        return $this->config['token_url'];
+        if (empty($this->config['url'])) {
+            return null;
+        }
+
+        return Helper::urlJoin($this->config['url'], '/token');
     }
 
     /**
-     * @param string $value
-     * @return $this
+     * @return string|null
      */
-    public function setTokenUrl($value)
+    public function getLogoutUrl()
     {
-        $this->config['token_url'] = $value;
-        return $this;
+        if (empty($this->config['url'])) {
+            return null;
+        }
+
+        return Helper::urlJoin($this->config['url'], '/logout');
     }
 
     /**
-     * @return string
+     * @return string|null
+     */
+    public function getLogoutEverywhereUrl()
+    {
+        if (empty($this->config['url'])) {
+            return null;
+        }
+
+        return Helper::urlJoin($this->config['url'], '/logout-everywhere');
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getAccountUrl()
+    {
+        if (empty($this->config['url'])) {
+            return null;
+        }
+
+        return Helper::urlJoin($this->config['url'], '/account');
+    }
+
+    /**
+     * @return string|null
      */
     public function getResourceOwnerUrl()
     {
-        return $this->config['resource_owner_url'];
-    }
+        if (empty($this->config['url'])) {
+            return null;
+        }
 
-    /**
-     * @param string $value
-     * @return $this
-     */
-    public function setResourceOwnerUrl($value)
-    {
-        $this->config['resource_owner_url'] = $value;
-        return $this;
+        return Helper::urlJoin($this->config['url'], '/userinfo');
     }
 
     /**
@@ -235,20 +276,20 @@ class OAuth2Config
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getToken()
+    public function getLocale()
     {
-        return $this->config['token'];
+        return $this->config['locale'];
     }
 
     /**
-     * @param string $value
+     * @param string|null $value
      * @return $this
      */
-    public function setToken($value)
+    public function setLocale($value)
     {
-        $this->config['token'] = $value;
+        $this->config['locale'] = $value;
         return $this;
     }
 
@@ -311,6 +352,13 @@ class OAuth2Config
      */
     public function toArray()
     {
-        return $this->config;
+        return array_merge($this->config, [
+            'authorize_url'         => $this->getAuthorizeUrl(),
+            'token_url'             => $this->getTokenUrl(),
+            'logout_url'            => $this->getLogoutUrl(),
+            'logout_everywhere_url' => $this->getLogoutEverywhereUrl(),
+            'resource_owner_url'    => $this->getResourceOwnerUrl(),
+            'account_url'           => $this->getAccountUrl(),
+        ]);
     }
 }

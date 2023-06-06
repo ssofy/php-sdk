@@ -7,7 +7,7 @@ use SSOfy\Models\Signature;
 class SignatureValidator
 {
     /**
-     * @var ClientConfig
+     * @var APIConfig
      */
     private $config;
 
@@ -17,7 +17,7 @@ class SignatureValidator
     private $signatureGenerator;
 
     /**
-     * @param ClientConfig $config
+     * @param APIConfig $config
      */
     public function __construct($config)
     {

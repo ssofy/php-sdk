@@ -11,10 +11,10 @@ use SSOfy\Models\APIResponse;
 use SSOfy\Models\Token;
 use SSOfy\Models\Entities\UserEntity;
 
-class Client
+class APIClient
 {
     /**
-     * @var ClientConfig
+     * @var APIConfig
      */
     private $config;
 
@@ -29,7 +29,7 @@ class Client
     private $signatureGenerator;
 
     /**
-     * @param ClientConfig $config
+     * @param APIConfig $config
      */
     public function __construct($config)
     {
@@ -52,6 +52,10 @@ class Client
         $path  = 'v1/authenticated/verify';
         $token = $this->sanitizeToken($token);
 
+        if (empty($token)) {
+            throw new InvalidTokenException();
+        }
+
         $response = $this->requestAndCache($path, $token);
 
         return new APIResponse([
@@ -72,6 +76,10 @@ class Client
     {
         $path  = 'v1/authenticated/user';
         $token = $this->sanitizeToken($token);
+
+        if (empty($token)) {
+            throw new InvalidTokenException();
+        }
 
         $response = $this->requestAndCache($path, $token, [], $cache);
 
@@ -270,6 +278,7 @@ class Client
 
     private function sanitizeToken($token)
     {
+        $token = filter_var($token, FILTER_UNSAFE_RAW);
         $arr = explode(' ', strval($token));
         return end($arr);
     }

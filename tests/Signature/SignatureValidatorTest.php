@@ -1,7 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use SSOfy\ClientConfig;
+use SSOfy\APIConfig;
 use SSOfy\Models\Entities\ClientEntity;
 use SSOfy\Models\Entities\ScopeEntity;
 use SSOfy\Models\Signature;
@@ -63,7 +63,7 @@ class SignatureValidatorTest extends TestCase
             ],
         ];
 
-        $validator = new SignatureValidator(new ClientConfig([
+        $validator = new SignatureValidator(new APIConfig([
             'key'    => 'cf47d697-cc0b-4262-8329-78a0995e6fd0',
             'secret' => 'lXp2rNYg8ht75l2l1vxNGNz2PWzZ7h6K',
         ]));
