@@ -116,8 +116,8 @@ class APIClient
      */
     public function invalidateTokenCache($token)
     {
-        $this->cache->delete("v1/authenticated/verify:$token");
-        $this->cache->delete("v1/authenticated/user:$token");
+        $this->cache->delete("request:v1/authenticated/verify:$token");
+        $this->cache->delete("request:v1/authenticated/user:$token");
     }
 
     /**
