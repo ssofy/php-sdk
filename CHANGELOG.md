@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.0.1 - 2023-06-08
+
+* Fixed the token cache invalidation issue.
+
 ## 2.0.0 - 2023-06-06
 
 * Renamed the `Client` to `APIClient` and `ClientConfig` to `APIConfig` for more readability. 
