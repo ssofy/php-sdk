@@ -39,6 +39,8 @@ class OAuth2Client
     {
         $provider = new GenericProvider($this->buildLeagueConfig($this->config, $uri));
 
+        $authUrl = $provider->getAuthorizationUrl();
+
         $state = $provider->getState();
 
         $stateData = [
@@ -54,7 +56,7 @@ class OAuth2Client
 
         return array_merge($stateData, [
             'state' => $state,
-            'uri'   => $provider->getAuthorizationUrl(),
+            'uri'   => $authUrl,
         ]);
     }
 
