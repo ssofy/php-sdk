@@ -33,7 +33,7 @@ class OAuth2Client
     /**
      * @param string $uri the requested uri
      * @param string $nextUri the uri to be continued after successful authorization
-     * @return string
+     * @return array
      */
     public function initAuthCodeFlow($uri, $nextUri)
     {
@@ -52,7 +52,10 @@ class OAuth2Client
 
         $this->saveState($state, $stateData, $this->config->getTimeout());
 
-        return $state;
+        return array_merge($stateData, [
+            'state' => $state,
+            'uri'   => $provider->getAuthorizationUrl(),
+        ]);
     }
 
     /**
