@@ -1,16 +1,16 @@
 # CHANGELOG
 
-## 2.0.1 - 2023-06-08
+## 2.0.0 - 2023-06-18
 
-* Fixed the token cache invalidation issue.
-
-## 2.0.0 - 2023-06-06
-
-* Renamed the `Client` to `APIClient` and `ClientConfig` to `APIConfig` for more readability. 
-* The `OAuth2Config` expects only the `url` parameter be given.
+* Renamed the `Client` class to `APIClient` and `ClientConfig` to `APIConfig` for readability. 
+* The `OAuth2Config` expects only the `url` parameter be given in config.
 The necessary paths for different actions will be appended by the SDK.
 * Added the `locale` config parameter to `OAuth2Config`.
-* New `OAuth2Client` methods: `initSocialAuthCodeFlow()`, `getLogoutUrl()`, `getAccountUrl()`
+* `OAuth2Client::initAuthCodeFlow()` now accepts `uri` which expected to be the full authorization url of auth server 
+and `nextUri` which is the next url to be continued after successful authorization.
+* Removed `SessionStorage` in accordance to the new workflow which doesn't take responsibility of sessions at SDK level.
+* `SignatureValicator` is renamed to `SignatureVerifier` and expects `SignatureGenerator` as a dependency.
+* Fixed the token cache invalidation issue.
 * Bug Fixes.
 
 ## 1.1.9 - 2023-06-01

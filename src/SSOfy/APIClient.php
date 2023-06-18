@@ -29,6 +29,11 @@ class APIClient
     private $signatureGenerator;
 
     /**
+     * @var SignatureVerifier
+     */
+    private $signatureVerifier;
+
+    /**
      * @param APIConfig $config
      */
     public function __construct($config)
@@ -38,6 +43,7 @@ class APIClient
         $this->cache = empty($config->getCacheStore()) ? new NullStorage() : $config->getCacheStore();
 
         $this->signatureGenerator = new SignatureGenerator();
+        $this->signatureVerifier = new SignatureVerifier($this->signatureGenerator);
     }
 
     /**
@@ -166,10 +172,9 @@ class APIClient
 
             // response signature verification
             $signature          = isset($response['headers']['signature']) && $response['headers']['signature'][0] ? $response['headers']['signature'][0] : null;
-            $signatureValidator = new SignatureValidator($this->config);
             if (
                 empty($signature) ||
-                !$signatureValidator->verifyBase64Signature(Helper::urlJoin('http://localhost', $path), $parsed, $signature)
+                !$this->signatureVerifier->verifyBase64Signature(Helper::urlJoin('http://localhost', $path), $parsed, $this->config->getSecret(), $signature)
             ) {
                 throw new SignatureVerificationException();
             }

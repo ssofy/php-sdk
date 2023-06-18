@@ -4,25 +4,16 @@ namespace SSOfy;
 
 use SSOfy\Models\Signature;
 
-class SignatureValidator
+class SignatureVerifier
 {
-    /**
-     * @var APIConfig
-     */
-    private $config;
-
     /**
      * @var SignatureGenerator
      */
-    private $signatureGenerator;
+    protected $signatureGenerator;
 
-    /**
-     * @param APIConfig $config
-     */
-    public function __construct($config)
+    public function __construct(SignatureGenerator $signatureGenerator)
     {
-        $this->config = $config;
-        $this->signatureGenerator = new SignatureGenerator();
+        $this->signatureGenerator = $signatureGenerator;
     }
 
     /**
@@ -31,11 +22,11 @@ class SignatureValidator
      * @param string $signature
      * @return boolean
      */
-    public function verifyBase64Signature($url, $params, $signature)
+    public function verifyBase64Signature($url, $params, $secret, $signature)
     {
         try {
             $decodedSignature   = new Signature(json_decode(base64_decode($signature), true));
-            $generatedSignature = $this->signatureGenerator->generate($url, $params, $this->config->getSecret(), $decodedSignature->salt);
+            $generatedSignature = $this->signatureGenerator->generate($url, $params, $secret, $decodedSignature->salt);
             return $generatedSignature->hash === $decodedSignature->hash;
         } catch (\Exception $exception) {
             return false;

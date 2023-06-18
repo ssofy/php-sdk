@@ -1,12 +1,12 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use SSOfy\APIConfig;
 use SSOfy\Models\Entities\ClientEntity;
 use SSOfy\Models\Entities\ScopeEntity;
 use SSOfy\Models\Signature;
 use SSOfy\Models\Entities\UserEntity;
-use SSOfy\SignatureValidator;
+use SSOfy\SignatureGenerator;
+use SSOfy\SignatureVerifier;
 
 class SignatureValidatorTest extends TestCase
 {
@@ -63,13 +63,11 @@ class SignatureValidatorTest extends TestCase
             ],
         ];
 
-        $validator = new SignatureValidator(new APIConfig([
-            'key'    => 'cf47d697-cc0b-4262-8329-78a0995e6fd0',
-            'secret' => 'lXp2rNYg8ht75l2l1vxNGNz2PWzZ7h6K',
-        ]));
+        $signatureGenerator = new SignatureGenerator();
+        $validator = new SignatureVerifier($signatureGenerator);
 
         foreach ($cases as $case) {
-            $ok = $validator->verifyBase64Signature($case['url'], $case['params'], $case['signature']);
+            $ok = $validator->verifyBase64Signature($case['url'], $case['params'], 'lXp2rNYg8ht75l2l1vxNGNz2PWzZ7h6K', $case['signature']);
             $this->assertTrue($ok);
         }
     }

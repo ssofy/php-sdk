@@ -24,7 +24,6 @@ class OAuth2Config
             'timeout'           => 60 * 60, // 1 hour
             'scopes'            => [],
             'locale'            => null,
-            'session_store'     => null,
             'state_ttl'         => 60 * 60 * 24 * 365, // 1 year
             'state_store'       => null,
         ];
@@ -85,15 +84,22 @@ class OAuth2Config
     }
 
     /**
+     * @param string|null $token
      * @return string|null
      */
-    public function getAuthorizeUrl()
+    public function getAuthorizeUrl($token = null)
     {
         if (empty($this->config['url'])) {
             return null;
         }
 
-        return Helper::urlJoin($this->config['url'], "/authorize");
+        $params = [];
+
+        if (!is_null($token)) {
+            $params['token'] = $token;
+        }
+
+        return $this->addUrlParams(Helper::urlJoin($this->config['url'], "/authorize"), $params);
     }
 
     /**
@@ -108,7 +114,7 @@ class OAuth2Config
 
         $provider = strtolower($provider);
 
-        return Helper::urlJoin($this->config['url'], "/social/{$provider}/authorize");
+        return $this->addUrlParams(Helper::urlJoin($this->config['url'], "/social/{$provider}/authorize"));
     }
 
     /**
@@ -132,7 +138,7 @@ class OAuth2Config
             return null;
         }
 
-        return Helper::urlJoin($this->config['url'], '/logout');
+        return $this->addUrlParams(Helper::urlJoin($this->config['url'], '/logout'));
     }
 
     /**
@@ -144,7 +150,19 @@ class OAuth2Config
             return null;
         }
 
-        return Helper::urlJoin($this->config['url'], '/logout-everywhere');
+        return $this->addUrlParams(Helper::urlJoin($this->config['url'], '/logout-everywhere'));
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getRegisterUrl()
+    {
+        if (empty($this->config['url'])) {
+            return null;
+        }
+
+        return $this->addUrlParams(Helper::urlJoin($this->config['url'], '/register'));
     }
 
     /**
@@ -156,7 +174,7 @@ class OAuth2Config
             return null;
         }
 
-        return Helper::urlJoin($this->config['url'], '/account');
+        return $this->addUrlParams(Helper::urlJoin($this->config['url'], '/account'));
     }
 
     /**
@@ -296,24 +314,6 @@ class OAuth2Config
     /**
      * @return StorageInterface
      */
-    public function getSessionStore()
-    {
-        return $this->config['session_store'];
-    }
-
-    /**
-     * @param StorageInterface $value
-     * @return $this
-     */
-    public function setSessionStore($value)
-    {
-        $this->config['session_store'] = $value;
-        return $this;
-    }
-
-    /**
-     * @return StorageInterface
-     */
     public function getStateStore()
     {
         return $this->config['state_store'];
@@ -360,5 +360,27 @@ class OAuth2Config
             'resource_owner_url'    => $this->getResourceOwnerUrl(),
             'account_url'           => $this->getAccountUrl(),
         ]);
+    }
+
+    private function addUrlParams($url, $extraParams = [])
+    {
+        $params = $extraParams;
+
+        $locale      = $this->getLocale();
+        $redirectUrl = $this->getRedirectUri();
+
+        if (!empty($locale)) {
+            $params['locale'] = $locale;
+        }
+
+        if (!empty($redirectUrl)) {
+            $params['redirect_uri'] = $redirectUrl;
+        }
+
+        if (!empty($params)) {
+            $url = Helper::addUrlParams($url, $params);
+        }
+
+        return $url;
     }
 }

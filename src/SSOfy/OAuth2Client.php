@@ -22,64 +22,43 @@ class OAuth2Client
     private $stateStore;
 
     /**
-     * @var StorageInterface
-     */
-    private $sessionStore;
-
-    /**
      * @param OAuth2Config $config
      */
     public function __construct($config)
     {
-        $this->config       = $config;
-        $this->stateStore   = empty($config->getStateStore()) ? new NullStorage() : $config->getStateStore();
-        $this->sessionStore = empty($config->getSessionStore()) ? new NullStorage() : $config->getSessionStore();
-    }
-
-    /**
-     * @return string
-     */
-    public function getSessionState()
-    {
-        return $this->sessionStore->get($this->stateSessionKey());
+        $this->config     = $config;
+        $this->stateStore = empty($config->getStateStore()) ? new NullStorage() : $config->getStateStore();
     }
 
     /**
      * @param string $uri the requested uri
-     * @param string|null $token
-     * @param string|null $locale
+     * @param string $nextUri the uri to be continued after successful authorization
      * @return string
      */
-    public function initAuthCodeFlow($uri, $token = null, $locale = null)
+    public function initAuthCodeFlow($uri, $nextUri)
     {
-        $authorizeUrl = $this->config->getAuthorizeUrl();
+        $provider = new GenericProvider($this->buildLeagueConfig($this->config, $uri));
 
-        $params = [];
+        $state = $provider->getState();
 
-        if (!is_null($token)) {
-            $params['token'] = $token;
+        $stateData = [
+            'uri'    => $nextUri,
+            'config' => $this->config->toArray(),
+        ];
+
+        if ($this->config->getPkceVerification()) {
+            $stateData['pkce_code'] = $provider->getPkceCode();
         }
 
-        return $this->initAuthCodePrivate($uri, $authorizeUrl, $params, $locale);
-    }
+        $this->saveState($state, $stateData, $this->config->getTimeout());
 
-    /**
-     * @param string $uri the requested uri
-     * @param string $provider
-     * @param string|null $locale
-     * @return string
-     */
-    public function initSocialAuthCodeFlow($uri, $provider, $locale = null)
-    {
-        $authorizeUrl = $this->config->getSocialAuthorizeUrl($provider);
-
-        return $this->initAuthCodePrivate($uri, $authorizeUrl, [], $locale);
+        return $state;
     }
 
     /**
      * @param string $state
      * @param string $code
-     * @return string
+     * @return array
      * @throws IdentityProviderException
      */
     public function continueAuthCodeFlow($state, $code)
@@ -102,9 +81,7 @@ class OAuth2Client
 
         $this->saveState($state, $stateData, $this->config->getStateTtl());
 
-        $this->sessionStore->put($this->stateSessionKey(), $state);
-
-        return $stateData['uri'];
+        return $stateData;
     }
 
     /**
@@ -200,92 +177,6 @@ class OAuth2Client
     }
 
     /**
-     * @param string|null $redirectUri
-     * @param bool $everywhere
-     * @return string|null
-     */
-    public function getLogoutUrl($redirectUri = null, $everywhere = false, $locale = null)
-    {
-        $url = $everywhere ? $this->config->getLogoutEverywhereUrl() : $this->config->getLogoutUrl();
-
-        if (empty($url)) {
-            return null;
-        }
-
-        $params = [];
-
-        if (!is_null($redirectUri)) {
-            $params['redirect_uri'] = $redirectUri;
-        }
-
-        if (!is_null($locale)) {
-            $params['locale'] = $locale;
-        }
-
-        if (!empty($params)) {
-            $url = Helper::addUrlParams($url, $params);
-        }
-
-        return $url;
-    }
-
-    /**
-     * @param string|null $locale
-     * @return string|null
-     */
-    public function getAccountUrl($locale = null)
-    {
-        $url = $this->config->getAccountUrl();
-
-        if (empty($url)) {
-            return null;
-        }
-
-        $params = [];
-
-        if (!is_null($locale)) {
-            $params['locale'] = $locale;
-        }
-
-        if (!empty($params)) {
-            $url = Helper::addUrlParams($url, $params);
-        }
-
-        return $url;
-    }
-
-    private function initAuthCodePrivate($uri, $authorizeUrl, $params, $locale)
-    {
-        if (!is_null($locale)) {
-            $params['locale'] = $locale;
-        } elseif (!is_null($this->config->getLocale())) {
-            $params['locale'] = $this->config->getLocale();
-        }
-
-        if (!empty($params) && !empty($authorizeUrl)) {
-            $authorizeUrl = Helper::addUrlParams($authorizeUrl, $params);
-        }
-
-        $provider = new GenericProvider($this->buildLeagueConfig($this->config, $authorizeUrl));
-
-        $authorizationUrl = $provider->getAuthorizationUrl();
-        $state            = $provider->getState();
-
-        $stateData = [
-            'uri'    => $uri,
-            'config' => $this->config->toArray(),
-        ];
-
-        if ($this->config->getPkceVerification()) {
-            $stateData['pkce_code'] = $provider->getPkceCode();
-        }
-
-        $this->saveState($state, $stateData, $this->config->getTimeout());
-
-        return $authorizationUrl;
-    }
-
-    /**
      * @param OAuth2Config $config
      * @param string|null $authorizeUrl
      * @return array
@@ -330,7 +221,6 @@ class OAuth2Client
 
         $this->stateStore->delete($key);
 
-        unset($data['config']['session_store']);
         unset($data['config']['state_store']);
 
         $this->stateStore->put($key, serialize($data), $timeout);
@@ -343,16 +233,10 @@ class OAuth2Client
     public function deleteState($state)
     {
         $this->stateStore->delete($this->stateStorageKey($state));
-        $this->sessionStore->delete($this->stateSessionKey());
     }
 
     private function stateStorageKey($state)
     {
         return "oauth:state:$state";
-    }
-
-    private function stateSessionKey()
-    {
-        return "oauth:workflow-state";
     }
 }
