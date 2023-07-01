@@ -7,7 +7,7 @@ Read the full [documentation](https://www.ssofy.com/docs/SDK/PHP/Installation) a
 ### Installing via Composer
 
 ```bash
-composer require ssofy/php-sdk
+composer require ssofy/php-sdk:^2.0.0
 ```
 
 ## Support
