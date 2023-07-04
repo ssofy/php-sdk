@@ -353,12 +353,23 @@ class OAuth2Config
     public function toArray()
     {
         return array_merge($this->config, [
+            'client_id'             => $this->getClientId(),
+            'client_secret'         => $this->getClientSecret(),
             'authorize_url'         => $this->getAuthorizeUrl(),
             'token_url'             => $this->getTokenUrl(),
             'logout_url'            => $this->getLogoutUrl(),
             'logout_everywhere_url' => $this->getLogoutEverywhereUrl(),
             'resource_owner_url'    => $this->getResourceOwnerUrl(),
+            'register_url'          => $this->getRegisterUrl(),
             'account_url'           => $this->getAccountUrl(),
+            'redirect_uri'          => $this->getRedirectUri(),
+            'pkce_verification'     => $this->getPkceVerification(),
+            'pkce_method'           => $this->getPkceMethod(),
+            'timeout'               => $this->getTimeout(),
+            'scopes'                => $this->getScopes(),
+            'locale'                => $this->getLocale(),
+            'state_store'           => $this->getStateStore(),
+            'state_ttl'             => $this->getStateTtl(),
         ]);
     }
 
