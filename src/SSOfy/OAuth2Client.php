@@ -173,7 +173,7 @@ class OAuth2Client
             $accessToken = $provider->getAccessToken('refresh_token', [
                 'refresh_token' => $accessToken->getRefreshToken()
             ]);
-        } catch (\Exception $exception) {
+        } catch (IdentityProviderException $exception) {
             return null;
         }
 
