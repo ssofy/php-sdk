@@ -145,7 +145,6 @@ class OAuth2Client
     /**
      * @param string $state
      * @return AccessTokenInterface
-     * @throws IdentityProviderException
      */
     public function getAccessToken($state)
     {
@@ -170,9 +169,13 @@ class OAuth2Client
             $provider->setPkceCode($stateData['pkce_code']);
         }
 
-        $accessToken = $provider->getAccessToken('refresh_token', [
-            'refresh_token' => $accessToken->getRefreshToken()
-        ]);
+        try {
+            $accessToken = $provider->getAccessToken('refresh_token', [
+                'refresh_token' => $accessToken->getRefreshToken()
+            ]);
+        } catch (\Exception $exception) {
+            return null;
+        }
 
         $stateData['access_token'] = $accessToken;
 
