@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2.0.2 - 2023-06-22
+
+* Repository contracts have been added to help with resource server integrations.
+
+## 2.0.1 - 2023-06-18
+
+* Hotfix: Handled the refresh token exception.
+
 ## 2.0.0 - 2023-06-18
 
 * Renamed the `Client` class to `APIClient` and `ClientConfig` to `APIConfig` for readability. 
