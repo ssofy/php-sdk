@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2.1.0 - 2023-07-30
+
+- Config parameter renames.
+- Removed ContinueAuthCodeFlow() and introduced handleCallback().
+- OAuth2Client methods now throw InvalidState exception.
+- Fixes.
+
 ## 2.0.2 - 2023-06-22
 
 * Repository contracts have been added to help with resource server integrations.
