@@ -70,9 +70,7 @@ class OAuth2Client
      */
     public function handleCallback($payload)
     {
-        $state = $payload['state'];
-
-        $stateData = $this->getState($state);
+        $stateData = $this->getState($payload['state']);
 
         if (is_null($stateData)) {
             throw new InvalidStateException();
@@ -88,7 +86,7 @@ class OAuth2Client
 
         try {
             $accessToken = $provider->getAccessToken('authorization_code', [
-                'code' => $state,
+                'code' => $payload['code'],
             ]);
         } catch (\Exception $exception) {
             throw new AuthErrorException($exception->getMessage());
@@ -96,7 +94,7 @@ class OAuth2Client
 
         $stateData['token'] = $accessToken;
 
-        $this->saveState($state, $stateData, $this->config->getStateTtl());
+        $this->saveState($payload['state'], $stateData, $this->config->getStateTtl());
 
         return $stateData;
     }
@@ -246,7 +244,13 @@ class OAuth2Client
      */
     private function getState($state)
     {
-        return unserialize($this->stateStore->get($this->stateStorageKey($state)));
+        $data = $this->stateStore->get($this->stateStorageKey($state));
+
+        if (is_null($data)) {
+            return null;
+        }
+
+        return unserialize($data);
     }
 
     /**

@@ -6,6 +6,6 @@ class InvalidValueException extends Exception
 {
     public function __construct($attr, $message)
     {
-        parent::__construct(trim("\"$attr\" is invalid. $message"));
+        parent::__construct(trim("\"{$attr}\" is invalid. {$message}"));
     }
 }

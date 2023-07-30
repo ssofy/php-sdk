@@ -6,6 +6,6 @@ class UserNotFoundException extends Exception
 {
     public function __construct()
     {
-        parent::__construct("User Not Found");
+        parent::__construct('User Not Found');
     }
 }

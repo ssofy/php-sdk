@@ -2,10 +2,10 @@
 
 ## 2.1.0 - 2023-07-30
 
-- Config parameter renames.
-- Removed ContinueAuthCodeFlow() and introduced handleCallback().
-- OAuth2Client methods now throw InvalidState exception.
-- Fixes.
+* Config parameter renames.
+* Removed ContinueAuthCodeFlow() and introduced handleCallback().
+* OAuth2Client methods now throw InvalidState exception.
+* Fixes.
 
 ## 2.0.2 - 2023-06-22
 
