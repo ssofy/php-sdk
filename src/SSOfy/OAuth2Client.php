@@ -39,11 +39,11 @@ class OAuth2Client
      */
     public function initAuthCodeFlow($authorizationUrl = null, $nextUri = null)
     {
-        $provider = new GenericProvider($this->buildLeagueConfig($this->config, $authorizationUrl));
-
-        $authUrl = $provider->getAuthorizationUrl();
-
-        $state = $provider->getState();
+        while (!isset($state) || !is_null($this->stateStore->get($this->stateStorageKey($state)))) {
+            $provider = new GenericProvider($this->buildLeagueConfig($this->config, $authorizationUrl));
+            $authUrl  = $provider->getAuthorizationUrl();
+            $state    = $provider->getState();
+        }
 
         $stateData = [
             'uri'    => $nextUri,
