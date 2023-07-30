@@ -4,6 +4,8 @@ SSOfy PHP SDK
 
 Read the full [documentation](https://www.ssofy.com/docs/SDK/PHP/Installation) at **SSOfy Knowledge Base**.
 
+<img src="docs/img/logo.png"/>
+
 ### Installing via Composer
 
 ```bash
@@ -17,8 +19,6 @@ Our technical experts are available around the clock to conduct investigations a
 the highest quality product and service support as quickly as possible.
 
 ## Author
-
-![](./docs/brand.png)
 
 **SSOfy** and derivatives are by [Cubelet Ltd](https://cubelet.co.uk).
 
