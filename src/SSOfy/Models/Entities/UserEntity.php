@@ -36,7 +36,7 @@ use SSOfy\Models\BaseModel;
  * @property string custom_7
  * @property string custom_8
  * @property string custom_9
- * @property array  additional
+ * @property array additional
  */
 class UserEntity extends BaseModel
 {
@@ -52,26 +52,26 @@ class UserEntity extends BaseModel
         'email_verified',
         'phone',
         'phone_verified',
-        "given_name",
-        "middle_name",
-        "family_name",
-        "nickname",
-        "website",
-        "gender",
-        "birthdate",
-        "address",
-        "location",
-        "zoneinfo",
-        "locale",
-        "custom_1",
-        "custom_2",
-        "custom_3",
-        "custom_4",
-        "custom_5",
-        "custom_6",
-        "custom_7",
-        "custom_8",
-        "custom_9",
+        'given_name',
+        'middle_name',
+        'family_name',
+        'nickname',
+        'website',
+        'gender',
+        'birthdate',
+        'address',
+        'location',
+        'zoneinfo',
+        'locale',
+        'custom_1',
+        'custom_2',
+        'custom_3',
+        'custom_4',
+        'custom_5',
+        'custom_6',
+        'custom_7',
+        'custom_8',
+        'custom_9',
         'additional',
     ];
 

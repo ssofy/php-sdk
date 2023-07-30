@@ -9,6 +9,6 @@ class AuthErrorException extends Exception
      */
     public function __construct($message)
     {
-        parent::__construct("Error: ${message}");
+        parent::__construct("Error: {$message}");
     }
 }

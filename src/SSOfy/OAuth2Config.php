@@ -358,18 +358,21 @@ class OAuth2Config
      */
     public function toArray()
     {
-        return array_merge($this->config, [
-            'url'               => $this->getAuthorizationUrl(),
-            'client_id'         => $this->getClientId(),
-            'client_secret'     => $this->getClientSecret(),
-            'redirect_uri'      => $this->getRedirectUri(),
-            'pkce_verification' => $this->getPkceVerification(),
-            'pkce_method'       => $this->getPkceMethod(),
-            'timeout'           => $this->getTimeout(),
-            'scopes'            => $this->getScopes(),
-            'locale'            => $this->getLocale(),
-            'state_ttl'         => $this->getStateTtl(),
-        ]);
+        return array_intersect_key(
+            $this->config,
+            array_flip([
+                'url',
+                'client_id',
+                'client_secret',
+                'redirect_uri',
+                'pkce_verification',
+                'pkce_method',
+                'timeout',
+                'scopes',
+                'locale',
+                'state_ttl',
+            ])
+        );
     }
 
     private function addUrlParams($url, $extraParams = [])

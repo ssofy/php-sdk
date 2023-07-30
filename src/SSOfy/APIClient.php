@@ -105,7 +105,7 @@ class APIClient
      */
     public function findUserById($id, $cache = false)
     {
-        $path = "v1/resources/users/find";
+        $path = 'v1/resources/users/find';
 
         $response = $this->requestAndCache($path, null, [
             'id' => $id
@@ -122,8 +122,8 @@ class APIClient
      */
     public function invalidateTokenCache($token)
     {
-        $this->cache->delete("request:v1/authenticated/verify:$token");
-        $this->cache->delete("request:v1/authenticated/user:$token");
+        $this->cache->delete("request:v1/authenticated/verify:{$token}");
+        $this->cache->delete("request:v1/authenticated/user:{$token}");
     }
 
     /**
@@ -146,7 +146,7 @@ class APIClient
      */
     private function requestAndCache($path, $token = null, $fields = [], $cache = true)
     {
-        $cacheKey = "request:$path:$token";
+        $cacheKey = "request:{$path}:{$token}";
 
         if ($cache) {
             // try the cache first
