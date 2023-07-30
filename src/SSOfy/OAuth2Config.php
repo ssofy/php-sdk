@@ -24,8 +24,8 @@ class OAuth2Config
             'timeout'           => 60 * 60, // 1 hour
             'scopes'            => [],
             'locale'            => null,
-            'state_ttl'         => 60 * 60 * 24 * 365, // 1 year
             'state_store'       => null,
+            'state_ttl'         => 60 * 60 * 24 * 365, // 1 year
         ];
 
         $this->config = array_merge($default, $config);
@@ -87,7 +87,7 @@ class OAuth2Config
      * @param string|null $token
      * @return string|null
      */
-    public function getAuthorizeUrl($token = null)
+    public function getAuthorizationUrl($token = null)
     {
         if (empty($this->config['url'])) {
             return null;
@@ -106,7 +106,7 @@ class OAuth2Config
      * @param string $provider
      * @return string|null
      */
-    public function getSocialAuthorizeUrl($provider)
+    public function getSocialAuthorizationUrl($provider)
     {
         if (empty($this->config['url'])) {
             return null;
@@ -138,7 +138,9 @@ class OAuth2Config
             return null;
         }
 
-        return $this->addUrlParams(Helper::urlJoin($this->config['url'], '/logout'));
+        return $this->addUrlParams(Helper::urlJoin($this->config['url'], '/logout'), [
+            'redirect_uri' => $this->getRedirectUri(),
+        ]);
     }
 
     /**
@@ -150,25 +152,29 @@ class OAuth2Config
             return null;
         }
 
-        return $this->addUrlParams(Helper::urlJoin($this->config['url'], '/logout-everywhere'));
+        return $this->addUrlParams(Helper::urlJoin($this->config['url'], '/logout-everywhere'), [
+            'redirect_uri' => $this->getRedirectUri(),
+        ]);
     }
 
     /**
      * @return string|null
      */
-    public function getRegisterUrl()
+    public function getRegistrationUrl()
     {
         if (empty($this->config['url'])) {
             return null;
         }
 
-        return $this->addUrlParams(Helper::urlJoin($this->config['url'], '/register'));
+        return $this->addUrlParams(Helper::urlJoin($this->config['url'], '/register'), [
+            'redirect_uri' => $this->getRedirectUri(),
+        ]);
     }
 
     /**
      * @return string|null
      */
-    public function getAccountUrl()
+    public function getProfileUrl()
     {
         if (empty($this->config['url'])) {
             return null;
@@ -353,23 +359,16 @@ class OAuth2Config
     public function toArray()
     {
         return array_merge($this->config, [
-            'client_id'             => $this->getClientId(),
-            'client_secret'         => $this->getClientSecret(),
-            'authorize_url'         => $this->getAuthorizeUrl(),
-            'token_url'             => $this->getTokenUrl(),
-            'logout_url'            => $this->getLogoutUrl(),
-            'logout_everywhere_url' => $this->getLogoutEverywhereUrl(),
-            'resource_owner_url'    => $this->getResourceOwnerUrl(),
-            'register_url'          => $this->getRegisterUrl(),
-            'account_url'           => $this->getAccountUrl(),
-            'redirect_uri'          => $this->getRedirectUri(),
-            'pkce_verification'     => $this->getPkceVerification(),
-            'pkce_method'           => $this->getPkceMethod(),
-            'timeout'               => $this->getTimeout(),
-            'scopes'                => $this->getScopes(),
-            'locale'                => $this->getLocale(),
-            'state_store'           => $this->getStateStore(),
-            'state_ttl'             => $this->getStateTtl(),
+            'url'               => $this->getAuthorizationUrl(),
+            'client_id'         => $this->getClientId(),
+            'client_secret'     => $this->getClientSecret(),
+            'redirect_uri'      => $this->getRedirectUri(),
+            'pkce_verification' => $this->getPkceVerification(),
+            'pkce_method'       => $this->getPkceMethod(),
+            'timeout'           => $this->getTimeout(),
+            'scopes'            => $this->getScopes(),
+            'locale'            => $this->getLocale(),
+            'state_ttl'         => $this->getStateTtl(),
         ]);
     }
 
@@ -377,15 +376,10 @@ class OAuth2Config
     {
         $params = $extraParams;
 
-        $locale      = $this->getLocale();
-        $redirectUrl = $this->getRedirectUri();
+        $locale = $this->getLocale();
 
         if (!empty($locale)) {
             $params['locale'] = $locale;
-        }
-
-        if (!empty($redirectUrl)) {
-            $params['redirect_uri'] = $redirectUrl;
         }
 
         if (!empty($params)) {

@@ -6,6 +6,8 @@ use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\GenericProvider;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Token\AccessTokenInterface;
+use SSOfy\Exceptions\AuthErrorException;
+use SSOfy\Exceptions\InvalidStateException;
 use SSOfy\Storage\NullStorage;
 use SSOfy\Storage\StorageInterface;
 
@@ -31,13 +33,13 @@ class OAuth2Client
     }
 
     /**
-     * @param string $uri the requested uri
-     * @param string $nextUri the uri to be continued after successful authorization
+     * @param string|null $authorizationUrl custom authorization url. Defaults to AuthConfig::getAuthorizationUrl().
+     * @param string|null $nextUri the uri to be continued after successful authorization
      * @return array
      */
-    public function initAuthCodeFlow($uri, $nextUri)
+    public function initAuthCodeFlow($authorizationUrl = null, $nextUri = null)
     {
-        $provider = new GenericProvider($this->buildLeagueConfig($this->config, $uri));
+        $provider = new GenericProvider($this->buildLeagueConfig($this->config, $authorizationUrl));
 
         $authUrl = $provider->getAuthorizationUrl();
 
@@ -49,7 +51,7 @@ class OAuth2Client
         ];
 
         if ($this->config->getPkceVerification()) {
-            $stateData['pkce_code'] = $provider->getPkceCode();
+            $stateData['code_verifier'] = $provider->getPkceCode();
         }
 
         $this->saveState($state, $stateData, $this->config->getTimeout());
@@ -61,28 +63,38 @@ class OAuth2Client
     }
 
     /**
-     * @param string $state
-     * @param string $code
+     * @param array $payload
      * @return array
-     * @throws IdentityProviderException
+     * @throws InvalidStateException
+     * @throws AuthErrorException
      */
-    public function continueAuthCodeFlow($state, $code)
+    public function handleCallback($payload)
     {
+        $state = $payload['state'];
+
         $stateData = $this->getState($state);
+
+        if (is_null($stateData)) {
+            throw new InvalidStateException();
+        }
 
         $config = new OAuth2Config($stateData['config']);
 
         $provider = new GenericProvider($this->buildLeagueConfig($config));
 
-        if ($config->getPkceVerification()) {
-            $provider->setPkceCode($stateData['pkce_code']);
+        if ($config->getPkceVerification() && isset($stateData['code_verifier'])) {
+            $provider->setPkceCode($stateData['code_verifier']);
         }
 
-        $accessToken = $provider->getAccessToken('authorization_code', [
-            'code' => $code,
-        ]);
+        try {
+            $accessToken = $provider->getAccessToken('authorization_code', [
+                'code' => $state,
+            ]);
+        } catch (\Exception $exception) {
+            throw new AuthErrorException($exception->getMessage());
+        }
 
-        $stateData['access_token'] = $accessToken;
+        $stateData['token'] = $accessToken;
 
         $this->saveState($state, $stateData, $this->config->getStateTtl());
 
@@ -92,10 +104,15 @@ class OAuth2Client
     /**
      * @param string $state
      * @return OAuth2Config|null
+     * @throws InvalidStateException
      */
     public function getConfig($state)
     {
         $stateData = $this->getState($state);
+
+        if (is_null($stateData)) {
+            throw new InvalidStateException();
+        }
 
         if (!isset($stateData['config'])) {
             return null;
@@ -107,10 +124,15 @@ class OAuth2Client
     /**
      * @param string $state
      * @return mixed|null
+     * @throws InvalidStateException
      */
     public function getUserInfo($state)
     {
         $stateData = $this->getState($state);
+
+        if (is_null($stateData)) {
+            throw new InvalidStateException();
+        }
 
         if (!isset($stateData['user'])) {
             return $this->refreshUserInfo($state);
@@ -122,18 +144,23 @@ class OAuth2Client
     /**
      * @param string $state
      * @return ResourceOwnerInterface|null
+     * @throws InvalidStateException
      */
     public function refreshUserInfo($state)
     {
         $stateData = $this->getState($state);
 
-        if (!isset($stateData['access_token'])) {
-            return null;
+        if (is_null($stateData)) {
+            throw new InvalidStateException();
+        }
+
+        if (!isset($stateData['token'])) {
+            throw new InvalidStateException();
         }
 
         $provider = new GenericProvider($stateData['config']);
 
-        $user = $provider->getResourceOwner($stateData['access_token']);
+        $user = $provider->getResourceOwner($stateData['token']);
 
         $stateData['user'] = $user;
 
@@ -145,17 +172,22 @@ class OAuth2Client
     /**
      * @param string $state
      * @return AccessTokenInterface
+     * @throws InvalidStateException
      */
     public function getAccessToken($state)
     {
         $stateData = $this->getState($state);
 
-        if (!isset($stateData['access_token'])) {
-            return null;
+        if (is_null($stateData)) {
+            throw new InvalidStateException();
+        }
+
+        if (!isset($stateData['token'])) {
+            throw new InvalidStateException();
         }
 
         /** @var AccessTokenInterface $accessToken */
-        $accessToken = $stateData['access_token'];
+        $accessToken = $stateData['token'];
 
         if (!$accessToken->hasExpired()) {
             return $accessToken;
@@ -166,7 +198,7 @@ class OAuth2Client
         $provider = new GenericProvider($this->buildLeagueConfig($config));
 
         if ($config->getPkceVerification()) {
-            $provider->setPkceCode($stateData['pkce_code']);
+            $provider->setPkceCode($stateData['code_verifier']);
         }
 
         try {
@@ -177,7 +209,7 @@ class OAuth2Client
             return null;
         }
 
-        $stateData['access_token'] = $accessToken;
+        $stateData['token'] = $accessToken;
 
         $this->saveState($state, $stateData, $this->config->getStateTtl());
 
@@ -192,7 +224,7 @@ class OAuth2Client
     private function buildLeagueConfig($config, $authorizeUrl = null)
     {
         if (is_null($authorizeUrl)) {
-            $authorizeUrl = $config->getAuthorizeUrl();
+            $authorizeUrl = $config->getAuthorizationUrl();
         }
 
         return [
@@ -228,8 +260,6 @@ class OAuth2Client
         $key = $this->stateStorageKey($state);
 
         $this->stateStore->delete($key);
-
-        unset($data['config']['state_store']);
 
         $this->stateStore->put($key, serialize($data), $timeout);
     }
