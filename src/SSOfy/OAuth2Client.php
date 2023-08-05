@@ -304,7 +304,7 @@ class OAuth2Client
      * @param string $state
      * @return void
      */
-    public function deleteState($state)
+    public function destroy($state)
     {
         $this->stateStore->delete($this->stateStorageKey($state));
     }
