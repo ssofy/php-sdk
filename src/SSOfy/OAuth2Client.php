@@ -8,6 +8,7 @@ use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Token\AccessTokenInterface;
 use SSOfy\Exceptions\AuthErrorException;
 use SSOfy\Exceptions\InvalidStateException;
+use SSOfy\Exceptions\RefreshTokenException;
 use SSOfy\Storage\NullStorage;
 use SSOfy\Storage\StorageInterface;
 
@@ -171,6 +172,8 @@ class OAuth2Client
      * @param string $state
      * @return AccessTokenInterface
      * @throws InvalidStateException
+     * @throws RefreshTokenException
+     * @throws AuthErrorException
      */
     public function getAccessToken($state)
     {
@@ -191,6 +194,35 @@ class OAuth2Client
             return $accessToken;
         }
 
+        if (is_null($accessToken->getRefreshToken())) {
+            return null;
+        }
+
+        return $this->renewAccessToken($state);
+    }
+
+    /**
+     * @param $state
+     * @return AccessTokenInterface
+     * @throws InvalidStateException
+     * @throws RefreshTokenException
+     * @throws AuthErrorException
+     */
+    public function renewAccessToken($state)
+    {
+        $stateData = $this->getState($state);
+
+        if (is_null($stateData)) {
+            throw new InvalidStateException();
+        }
+
+        /** @var AccessTokenInterface $accessToken */
+        $accessToken = $stateData['token'];
+
+        if (is_null($accessToken->getRefreshToken())) {
+            throw new RefreshTokenException();
+        }
+
         $config = new OAuth2Config($stateData['config']);
 
         $provider = new GenericProvider($this->buildLeagueConfig($config));
@@ -204,7 +236,7 @@ class OAuth2Client
                 'refresh_token' => $accessToken->getRefreshToken()
             ]);
         } catch (IdentityProviderException $exception) {
-            return null;
+            throw new AuthErrorException($exception->getMessage());
         }
 
         $stateData['token'] = $accessToken;
@@ -272,7 +304,7 @@ class OAuth2Client
      * @param string $state
      * @return void
      */
-    public function deleteState($state)
+    public function destroy($state)
     {
         $this->stateStore->delete($this->stateStorageKey($state));
     }

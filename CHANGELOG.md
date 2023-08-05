@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2.1.1 - 2023-08-05
+
+* Added OAuth2Client::renewAccessToken().
+* Renamed: OAuth2Client::deleteState() -> OAuth2Client::destroy().
+
 ## 2.1.0 - 2023-07-30
 
 * Config parameter renames.
