@@ -63,23 +63,23 @@ class ClientEntity extends BaseModel
         switch ($attr) {
             case 'confidential':
                 if (!is_bool($value)) {
-                    return 'value must be boolean.';
+                    return 'value must be boolean';
                 }
 
                 return true;
 
             case 'redirect_uris':
                 if (!is_array($this->values['redirect_uris'])) {
-                    return 'value must be array.';
+                    return 'value must be array';
                 }
 
                 if (array_keys($this->values['redirect_uris']) !== range(0, count($this->values['redirect_uris']) - 1)) {
-                    return 'value must be an indexed array.';
+                    return 'value must be an indexed array';
                 }
 
                 foreach ($value as $item) {
                     if (!is_string($item)) {
-                        return 'value must be an array of strings.';
+                        return 'value must be an array of strings';
                     }
                 }
 
@@ -89,9 +89,9 @@ class ClientEntity extends BaseModel
         return parent::validate($attr, $value);
     }
 
-    public function export()
+    public function export($requiredFieldsCheck = true)
     {
-        $export = parent::export();
+        $export = parent::export($requiredFieldsCheck);
 
         $export['redirect_uris'] = array_values($this->values['redirect_uris']);
 

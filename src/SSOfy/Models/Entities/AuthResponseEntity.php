@@ -30,14 +30,14 @@ class AuthResponseEntity extends BaseModel
         switch ($attr) {
             case 'user':
                 if (!$value instanceof UserEntity) {
-                    return 'value must be UserEntity.';
+                    return 'value must be ' . UserEntity::class;
                 }
 
                 return true;
 
             case 'token':
                 if (!$value instanceof TokenEntity) {
-                    return 'value must be TokenEntity.';
+                    return 'value must be ' . TokenEntity::class;
                 }
 
                 return true;
