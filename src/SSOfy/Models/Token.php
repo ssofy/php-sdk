@@ -37,9 +37,9 @@ class Token extends BaseModel
         return parent::validate($attr, $value);
     }
 
-    public function export()
+    public function export($requiredFieldsCheck = true)
     {
-        $export = parent::export();
+        $export = parent::export($requiredFieldsCheck);
 
         $export['expires_at'] = \DateTime::createFromFormat(DATE_ATOM, $this->expires_at);
 
