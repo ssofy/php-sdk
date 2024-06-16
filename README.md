@@ -1,6 +1,6 @@
 SSOfy PHP SDK
 =============
-#### Official [SSOfy](https://www.ssofy.com) PHP SDK for instant and efficient API access.
+#### Official [SSOfy](https://www.ssofy.com) PHP SDK.
 
 Read the full [documentation](https://www.ssofy.com/docs/SDK/PHP/Installation) at **SSOfy Knowledge Base**.
 
