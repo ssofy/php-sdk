@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2.2.0 - 2024-06-16
+* Added optional requiredFieldsCheck for BaseModel::export().
+* Added "created" property for UserEntity to indicate whether the user is new in find-or-create operations.
+* Added filter and sort operations support.
+* Updated UserRepositoryInterface::find() signature with filtering support. (Breaking Change)
+* Added UserRepositoryInterface::findAll().
+
 ## 2.1.1 - 2023-08-05
 
 * Added OAuth2Client::renewAccessToken().
