@@ -4,6 +4,9 @@ namespace SSOfy\Repositories;
 
 use SSOfy\Models\Entities\TokenEntity;
 use SSOfy\Models\Entities\UserEntity;
+use SSOfy\Models\Filter;
+use SSOfy\Models\PaginatedResponse;
+use SSOfy\Models\Sort;
 
 interface UserRepositoryInterface
 {
@@ -26,6 +29,27 @@ interface UserRepositoryInterface
     public function findByToken($token, $ip = null);
 
     /**
+     * Find user by credentials such as email, phone, etc.
+     *
+     * @param Filter[]|array $filters
+     * @param string|null $ip
+     * @return UserEntity|null
+     */
+    public function find($filters, $ip = null);
+
+    /**
+     * Find and filter users by given search criteria.
+     *
+     * @param Filter[]|array $filters
+     * @param Sort[] $sorts
+     * @param int $count
+     * @param int $page
+     * @param string|null $ip
+     * @return PaginatedResponse
+     */
+    public function findAll($filters = [], $sorts = [], $count = 10, $page = 1, $ip = null);
+
+    /**
      * Find user by social provided user.
      *
      * @param string $provider
@@ -34,16 +58,6 @@ interface UserRepositoryInterface
      * @return UserEntity|null
      */
     public function findBySocialLinkOrCreate($provider, $user, $ip = null);
-
-    /**
-     * Find user by credentials such as email, phone, etc.
-     *
-     * @param string $field
-     * @param string $value
-     * @param string|null $ip
-     * @return UserEntity|null
-     */
-    public function find($field, $value, $ip = null);
 
     /**
      * Find or create user by email.

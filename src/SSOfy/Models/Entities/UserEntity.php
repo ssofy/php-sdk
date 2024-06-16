@@ -11,8 +11,8 @@ use SSOfy\Models\BaseModel;
  * @property string name
  * @property string picture
  * @property string profile
- * @property string email
  * @property string username
+ * @property string email
  * @property bool email_verified
  * @property string phone
  * @property bool phone_verified
@@ -37,6 +37,7 @@ use SSOfy\Models\BaseModel;
  * @property string custom_8
  * @property string custom_9
  * @property array additional
+ * @property bool created
  */
 class UserEntity extends BaseModel
 {
@@ -73,6 +74,7 @@ class UserEntity extends BaseModel
         'custom_8',
         'custom_9',
         'additional',
+        'created',
     ];
 
     protected $required = [
@@ -107,6 +109,7 @@ class UserEntity extends BaseModel
 
             case 'email_verified':
             case 'phone_verified':
+            case 'created':
                 if (!is_bool($value)) {
                     return 'value must be boolean';
                 }

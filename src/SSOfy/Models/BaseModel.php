@@ -39,7 +39,7 @@ class BaseModel implements \JsonSerializable
         }
 
         if (!is_string($value) && in_array($attr, $this->properties)) {
-            return 'value must be string.';
+            return 'value must be string';
         }
 
         return true;
@@ -49,26 +49,28 @@ class BaseModel implements \JsonSerializable
      * @throws RequiredAttributeException
      * @throws InvalidValueException
      */
-    protected function export()
+    protected function export($requiredFieldsCheck = true)
     {
-        foreach ($this->required as $requiredAttr) {
-            if (!isset($this->values[$requiredAttr])) {
-                throw new RequiredAttributeException($requiredAttr);
+        if ($requiredFieldsCheck) {
+            foreach ($this->required as $requiredAttr) {
+                if (!isset($this->values[$requiredAttr])) {
+                    throw new RequiredAttributeException($requiredAttr);
+                }
             }
         }
 
         foreach ($this->values as $attr => $value) {
             if (true !== $message = $this->validate($attr, $value)) {
-                throw new InvalidValueException($attr, $message);
+                throw new InvalidValueException($attr, lcfirst($message));
             }
         }
 
         return $this->values;
     }
 
-    public function toArray()
+    public function toArray($requiredFieldsCheck = true)
     {
-        $result = $this->export();
+        $result = $this->export($requiredFieldsCheck);
         $clean  = array();
 
         foreach ($result as $key => $val) {

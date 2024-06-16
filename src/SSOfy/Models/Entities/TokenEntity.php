@@ -33,14 +33,14 @@ class TokenEntity extends BaseModel
         switch ($attr) {
             case 'token':
                 if (!is_string($value)) {
-                    return 'value must be string.';
+                    return 'value must be string';
                 }
 
                 return true;
 
             case 'ttl':
-                if (!is_numeric($value)) {
-                    return 'value must be integer.';
+                if (!is_int($value)) {
+                    return 'value must be integer';
                 }
 
                 return true;

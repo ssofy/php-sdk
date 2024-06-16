@@ -1,7 +1,7 @@
 {
     "name": "ssofy/php-sdk",
     "type": "library",
-    "description": "Official SSOfy PHP SDK for instant and efficient API access.",
+    "description": "Official SSOfy PHP SDK.",
     "keywords": [
         "ssofy",
         "sso",
