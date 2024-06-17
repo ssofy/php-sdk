@@ -1,6 +1,8 @@
 <?php
 
-namespace SSOfy\Models;
+namespace SSOfy\Models\Entities;
+
+use SSOfy\Models\BaseModel;
 
 /**
  * @property array data
@@ -9,7 +11,7 @@ namespace SSOfy\Models;
  * @property int total_pages
  * @property int total_count
  */
-class PaginatedResponse extends BaseModel
+class PaginatedResponseEntity extends BaseModel
 {
     protected $properties = [
         'data',

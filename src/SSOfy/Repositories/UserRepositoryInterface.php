@@ -2,10 +2,10 @@
 
 namespace SSOfy\Repositories;
 
+use SSOfy\Models\Entities\PaginatedResponseEntity;
 use SSOfy\Models\Entities\TokenEntity;
 use SSOfy\Models\Entities\UserEntity;
 use SSOfy\Models\Filter;
-use SSOfy\Models\PaginatedResponse;
 use SSOfy\Models\Sort;
 
 interface UserRepositoryInterface
@@ -45,7 +45,7 @@ interface UserRepositoryInterface
      * @param int $count
      * @param int $page
      * @param string|null $ip
-     * @return PaginatedResponse
+     * @return PaginatedResponseEntity
      */
     public function findAll($filters = [], $sorts = [], $count = 10, $page = 1, $ip = null);
 
